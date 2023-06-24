@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
 import {MintableERC20} from "./mock/MintableERC20.sol";
-import {MiniSavingAccount, AssetNotSupported, RepayUnavailable, LiquidationUnavailable} from "src/MiniSavingAccount.sol";
+import {MiniSavingAccount, AssetNotSupported, LiquidationUnavailable} from "src/MiniSavingAccount.sol";
 import {console} from "forge-std/console.sol";
 import {Math} from "openzeppelin/contracts/utils/math/Math.sol";
 
