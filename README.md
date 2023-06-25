@@ -35,7 +35,7 @@ Alice deposits 1000 usd token and configure lending and collateral rates like it
 
 ## Tests
 
-Tests are written to cover as much scenarios as possible. Some test are fuzz test and some of them are not. Reason why some tests are not fuzz is next - It was really hard to properly bound all fuzz parameters such as depositAmount, borrowAmount, borrowPeriod, collateralRate and lendingRate. Because of that some tests are not fuzz tests. **This should never happen in production ready code!**
+Tests are written to cover as much scenarios as possible. Some test are fuzz test and some of them are not. Reason why some tests are not fuzz is next - It was really hard to properly bound all fuzz parameters such as *depositAmount*, *borrowAmount*, *borrowPeriod*, *collateralRate* and *lendingRate*. Because of that some tests are not fuzz tests. **This should never happen in production ready code!**
 
 **Note that broadcast is pushed to main branch. This is standard practice because all developers need to share last deployment broadcast.**
 
