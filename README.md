@@ -15,7 +15,7 @@ The MiniSavingAccount smart contract provides the following features:
 
 5. **Liquidate**: If a borrower fails to repay their borrowings within the specified borrowing period, the collateral can be liquidated by calling the ***liquidate*** function. The collateral assets stay in contract but now user can withdraw them. Also contract storage is updated that way that if borrower wants to repay already liquidated borrowing position transaction will pass but user will not receive any funds and contract will not take any funds away from him. This can be subject of discussion. Contract can be changed to revert in that case so user does not spend his ETH on full transaction fees. Also anyone can liquidate but will not be incentivised for that.
 
-6. **Setting Collateral Rates**: The contract owner can set the collateral rate for specific borrowing and lending assets by calling the ***setCollateralRate***  or ***setCollateralRateBatched***function.
+6. **Setting Collateral Rates**: The contract owner can set the collateral rate for specific borrowing and lending assets by calling the ***setCollateralRate***  or ***setCollateralRateBatched*** function.
 
 7. **Setting Daily Lending Rates**: The contract owner can set the daily lending rate for specific assets by calling the ***setDailyLendingRate*** or ***setDailyLendingRateBatched*** function.
 
@@ -37,7 +37,9 @@ Alice deposits 1000 usd token and configure lending and collateral rates like it
 
 Tests are written to cover as much scenarios as possible. Some test are fuzz test and some of them are not. Reason why some tests are not fuzz is next - It was really hard to properly bound all fuzz parameters such as depositAmount, borrowAmount, borrowPeriod, collateralRate and lendingRate. Because of that some tests are not fuzz tests. **This should never happen in production ready code!**
 
-## Improvment
+**Note that broadcast is pushed to main branch. This is standard practice because all developers need to share last deployment broadcast.**
+
+## Improvement
 This smart contract can be improved to handle multiple people depositing and borrowing into the same smart contract. Also this can be improved by writing ***MiniSavingAccountFactory*** smart contract. This smart contract would be responsible for deploying mini saving accounts for users and handling them. In that case ***MiniSavingAccountFactory*** will be owner of all saving account contract and because of that ***MiniSavingAccount*** contract should not be ownable no more but should handle owner inside constructor. Third way to improve this is to impelement ***SmartSavingAccountRouter*** smart contract who will find for each borrow best lending place like Balancer's ***SmartOfferRouter*** is doing.
 ## Usage
 
