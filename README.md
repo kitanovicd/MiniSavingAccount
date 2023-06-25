@@ -36,3 +36,6 @@ Alice deposits 1000 usd token and configure lending and collateral rates like it
 ## Tests
 
 Tests are written to cover as much scenarios as possible. Some test are fuzz test and some of them are not. Reason why some tests are not fuzz is next - It was really hard to properly bound all fuzz parameters such as depositAmount, borrowAmount, borrowPeriod, collateralRate and lendingRate. Because of that some tests are not fuzz tests. **This should never happen in production ready code!**
+
+## Improvment
+This smart contract can be improved to handle multiple people depositing and borrowing into the same smart contract. Also this can be improved by writing ***MiniSavingAccountFactory*** smart contract. This smart contract would be responsible for deploying mini saving accounts for users and handling them. In that case ***MiniSavingAccountFactory*** will be owner of all saving account contract and because of that ***MiniSavingAccount*** contract should not be ownable no more but should handle owner inside constructor. Third way to improve this is to impelement ***SmartSavingAccountRouter*** smart contract who will find for each borrow best lending place like Balancer's ***SmartOfferRouter*** is doing.
