@@ -5,11 +5,14 @@ import {Ownable} from "openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+error PeriodTooShort();
 error AssetNotSupported();
 error LiquidationUnavailable();
 
 contract MiniSavingAccount is Ownable {
     using SafeERC20 for IERC20;
+
+    uint256 constant MINIMUM_BORROWING_PERIOD = 7 days;
 
     struct BorrowInfo {
         address borrowAsset;
@@ -42,6 +45,10 @@ contract MiniSavingAccount is Ownable {
         address collateralAsset,
         uint256 period
     ) external returns (uint256) {
+        if (period < MINIMUM_BORROWING_PERIOD) {
+            revert PeriodTooShort();
+        }
+
         uint256 collateralRate = collateralRates[borrowAsset][collateralAsset];
 
         if (collateralRate == 0) {

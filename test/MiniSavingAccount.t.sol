@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std/Test.sol";
 import {Math} from "openzeppelin/contracts/utils/math/Math.sol";
 import {MintableERC20} from "./mock/MintableERC20.sol";
-import {MiniSavingAccount, AssetNotSupported, LiquidationUnavailable} from "src/MiniSavingAccount.sol";
+import {MiniSavingAccount, AssetNotSupported, LiquidationUnavailable, PeriodTooShort} from "src/MiniSavingAccount.sol";
 
 contract MiniSavingAccountTest is Test {
     address alice;
@@ -210,8 +210,20 @@ contract MiniSavingAccountTest is Test {
         uint256 borrowAmount,
         uint256 borrowPeriod
     ) public {
+        borrowPeriod = bound(borrowPeriod, 7 days, type(uint256).max);
+
         vm.expectRevert(AssetNotSupported.selector);
         account.borrow(address(usd), borrowAmount, address(eur), borrowPeriod);
+    }
+
+    function testBorrowRevertPeriodTooShort(
+        uint256 borrowAmount,
+        uint256 borrowPeriod
+    ) public {
+        borrowPeriod = bound(borrowPeriod, 0, 7 days - 1);
+
+        vm.expectRevert(PeriodTooShort.selector);
+        account.borrow(address(usd), borrowAmount, address(usd), borrowPeriod);
     }
 
     function testRepay() public {

@@ -9,7 +9,7 @@ The MiniSavingAccount smart contract provides the following features:
 
 2. **Withdraw**: Users can withdraw their deposited assets by calling the ***withdraw*** function. The specified amount of assets will be transferred back to the user's address. Function does not perfomed any balance checks. If owner wants to withdraw more assets then he has into saving account or wants to withdraw assets that are not liquidated transaction will revert because of insufficient funds or overflow.
 
-3. **Borrow**: Users can borrow assets by providing collateral. The ***borrow*** function allows users to specify the borrowing asset, borrowing amount, collateral asset, and borrowing period. The function calculates the return amount based on the borrowing amount and lending rates, and the required collateral amount based on the collateral rate. The collateral asset is transferred to the contract, and the borrowing asset is transferred to the borrower. 
+3. **Borrow**: Users can borrow assets by providing collateral. The ***borrow*** function allows users to specify the borrowing asset, borrowing amount, collateral asset, and borrowing period. Minimum borrowing period is 7 days and can be subject of discussion. The function calculates the return amount based on the borrowing amount and lending rates, and the required collateral amount based on the collateral rate. The collateral asset is transferred to the contract, and the borrowing asset is transferred to the borrower. 
 
 4. **Repay**: Borrowers can repay their borrowings by calling the ***repay*** function and specifying the index of borrowing position that he wants to repay. The borrowed assets are transferred back to the contract, and the collateral assets are transferred back to the borrower.
 
