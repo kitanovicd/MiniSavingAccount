@@ -39,3 +39,28 @@ Tests are written to cover as much scenarios as possible. Some test are fuzz tes
 
 ## Improvment
 This smart contract can be improved to handle multiple people depositing and borrowing into the same smart contract. Also this can be improved by writing ***MiniSavingAccountFactory*** smart contract. This smart contract would be responsible for deploying mini saving accounts for users and handling them. In that case ***MiniSavingAccountFactory*** will be owner of all saving account contract and because of that ***MiniSavingAccount*** contract should not be ownable no more but should handle owner inside constructor. Third way to improve this is to impelement ***SmartSavingAccountRouter*** smart contract who will find for each borrow best lending place like Balancer's ***SmartOfferRouter*** is doing.
+## Usage
+
+1. Clone the repository and position yourself in it:
+```bash
+git clone git@github.com:kitanovicd/MiniSavingAccount.git
+cd MiniSavingAccount
+```
+
+2. Compile smart contract:
+```bash
+forge build
+```
+
+3. Run tests:
+```bash
+forge test
+```
+
+4. Configure .env file by following .env.example
+
+5. Deploy smart contract:
+```bash
+chmod +x ./script/deploy.sh
+./script/deploy.sh
+```
