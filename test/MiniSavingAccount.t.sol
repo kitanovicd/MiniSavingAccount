@@ -101,11 +101,13 @@ contract MiniSavingAccountTest is Test {
     }
 
     function testBorrow() public {
-        uint256 borrowingPeriod = 365 days;
-        uint256 depositAmount = 3 ether;
-        uint256 borrowAmount = 1 ether;
-        uint256 lendingRate = 1 ether / 100;
-        uint256 collateralRate = (16 * 1 ether) / 10;
+        (
+            uint256 depositAmount,
+            uint256 borrowAmount,
+            uint256 lendingRate,
+            uint256 collateralRate,
+            uint256 borrowingPeriod
+        ) = _createParams();
 
         vm.startPrank(alice);
         account.setCollateralRate(address(usd), address(eur), collateralRate);
@@ -160,12 +162,22 @@ contract MiniSavingAccountTest is Test {
         );
     }
 
+    function testBorrowRevertAssetNotSupported(
+        uint256 borrowAmount,
+        uint256 borrowPeriod
+    ) public {
+        vm.expectRevert(AssetNotSupported.selector);
+        account.borrow(address(usd), borrowAmount, address(eur), borrowPeriod);
+    }
+
     function testRepay() public {
-        uint256 borrowingPeriod = 365 days;
-        uint256 depositAmount = 3 ether;
-        uint256 borrowAmount = 1 ether;
-        uint256 lendingRate = 1 ether / 100;
-        uint256 collateralRate = (16 * 1 ether) / 10;
+        (
+            uint256 depositAmount,
+            uint256 borrowAmount,
+            uint256 lendingRate,
+            uint256 collateralRate,
+            uint256 borrowingPeriod
+        ) = _createParams();
 
         vm.startPrank(alice);
 
@@ -214,11 +226,13 @@ contract MiniSavingAccountTest is Test {
     }
 
     function testLiquidate() public {
-        uint256 borrowingPeriod = 365 days;
-        uint256 depositAmount = 3 ether;
-        uint256 borrowAmount = 1 ether;
-        uint256 lendingRate = 1 ether / 100;
-        uint256 collateralRate = (16 * 1 ether) / 10;
+        (
+            uint256 depositAmount,
+            uint256 borrowAmount,
+            uint256 lendingRate,
+            uint256 collateralRate,
+            uint256 borrowingPeriod
+        ) = _createParams();
 
         vm.startPrank(alice);
 
@@ -261,39 +275,31 @@ contract MiniSavingAccountTest is Test {
     }
 
     function testLiquidateRevertLiquidationUnavailable() public {
-        uint256 borrowingPeriod = 365 days;
-        uint256 depositAmount = 3 ether;
-        uint256 borrowAmount = 1 ether;
-        uint256 lendingRate = 1 ether / 100;
-        uint256 collateralRate = (16 * 1 ether) / 10;
+        testBorrow();
 
-        vm.startPrank(alice);
+        MiniSavingAccount.BorrowInfo memory borrowInfo = account
+            .getBorrowingInfo(0);
 
-        account.setCollateralRate(address(usd), address(eur), collateralRate);
-        account.setDailyLendingRate(address(usd), lendingRate);
-        usd.approve(address(account), depositAmount);
-        account.deposit(address(usd), depositAmount);
-
-        vm.stopPrank();
-        vm.startPrank(bob);
-
-        uint256 returnAmount = borrowAmount +
-            (lendingRate * borrowingPeriod) /
-            1 ether;
-        uint256 collateralAmount = (returnAmount * collateralRate) / 1 ether;
-
-        eur.approve(address(account), collateralAmount);
-        account.borrow(
-            address(usd),
-            borrowAmount,
-            address(eur),
-            borrowingPeriod
-        );
-
-        vm.stopPrank();
-
-        vm.warp(block.timestamp + borrowingPeriod - 1);
+        vm.warp(borrowInfo.returDateTimestamp - 1);
         vm.expectRevert(LiquidationUnavailable.selector);
         account.liquidate(0);
+    }
+
+    function _createParams()
+        internal
+        pure
+        returns (
+            uint256 depositAmount,
+            uint256 borrowAmount,
+            uint256 ledningRate,
+            uint256 collateralRate,
+            uint256 borrowingPeriod
+        )
+    {
+        depositAmount = 3 ether;
+        borrowAmount = 1 ether;
+        ledningRate = 1 ether / 100;
+        collateralRate = (16 * 1 ether) / 10;
+        borrowingPeriod = 365 days;
     }
 }
