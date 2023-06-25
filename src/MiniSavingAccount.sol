@@ -31,7 +31,7 @@ contract MiniSavingAccount is Ownable {
         IERC20(asset).safeTransferFrom(msg.sender, address(this), amount);
     }
 
-    function withdraw(address asset, uint256 amount) external {
+    function withdraw(address asset, uint256 amount) external onlyOwner {
         balances[asset] -= amount;
         IERC20(asset).safeTransfer(msg.sender, amount);
     }
@@ -117,11 +117,32 @@ contract MiniSavingAccount is Ownable {
         collateralRates[lendingAsset][borrowingAsset] = borrowRate;
     }
 
+    function setCollateralRateBatched(
+        address[] calldata lendingAssets,
+        address[] calldata borrowingAssets,
+        uint256[] calldata borrowRates
+    ) external onlyOwner {
+        for (uint256 i = 0; i < lendingAssets.length; i++) {
+            collateralRates[lendingAssets[i]][borrowingAssets[i]] = borrowRates[
+                i
+            ];
+        }
+    }
+
     function setDailyLendingRate(
         address asset,
         uint256 lendingRate
     ) external onlyOwner {
         lendingRatesDaily[asset] = lendingRate;
+    }
+
+    function setDailyLendingRateBatched(
+        address[] calldata assets,
+        uint256[] calldata lendingRates
+    ) external onlyOwner {
+        for (uint256 i = 0; i < assets.length; i++) {
+            lendingRatesDaily[assets[i]] = lendingRates[i];
+        }
     }
 
     function getBorrowingInfo(

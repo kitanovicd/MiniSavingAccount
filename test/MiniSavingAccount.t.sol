@@ -2,10 +2,9 @@
 pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
+import {Math} from "openzeppelin/contracts/utils/math/Math.sol";
 import {MintableERC20} from "./mock/MintableERC20.sol";
 import {MiniSavingAccount, AssetNotSupported, LiquidationUnavailable} from "src/MiniSavingAccount.sol";
-import {console} from "forge-std/console.sol";
-import {Math} from "openzeppelin/contracts/utils/math/Math.sol";
 
 contract MiniSavingAccountTest is Test {
     address alice;
@@ -84,12 +83,39 @@ contract MiniSavingAccountTest is Test {
         assertEq(aliceBalanceAfter - aliceBalanceBefore, withdrawAmount);
     }
 
-    function testSetCollateralRate(uint256 amount) public {
+    function testSetCollateralRate(
+        address asset1,
+        address asset2,
+        uint256 rate
+    ) public {
         vm.startPrank(alice);
-        account.setCollateralRate(address(usd), address(eur), amount);
+        account.setCollateralRate(asset1, asset2, rate);
         vm.stopPrank();
 
-        assertEq(account.collateralRates(address(usd), address(eur)), amount);
+        assertEq(account.collateralRates(asset1, asset2), rate);
+    }
+
+    function testSetCollateralRateBatched() public {
+        address[] memory asset1 = new address[](2);
+        asset1[0] = address(usd);
+        asset1[1] = address(eur);
+
+        address[] memory asset2 = new address[](2);
+        asset2[0] = address(usd);
+        asset2[1] = address(eur);
+
+        uint256[] memory rate = new uint256[](2);
+        rate[0] = 1 ether;
+        rate[1] = 2 ether;
+
+        vm.startPrank(alice);
+
+        account.setCollateralRateBatched(asset1, asset2, rate);
+        vm.stopPrank();
+
+        for (uint256 i = 0; i < asset1.length; i++) {
+            assertEq(account.collateralRates(asset1[i], asset2[i]), rate[i]);
+        }
     }
 
     function testSetDailyLendingRate(uint256 amount) public {
@@ -98,6 +124,24 @@ contract MiniSavingAccountTest is Test {
         vm.stopPrank();
 
         assertEq(account.lendingRatesDaily(address(usd)), amount);
+    }
+
+    function testSetDailyLendingRateBatched() public {
+        address[] memory asset = new address[](2);
+        asset[0] = address(usd);
+        asset[1] = address(eur);
+
+        uint256[] memory rate = new uint256[](2);
+        rate[0] = 1 ether;
+        rate[1] = 2 ether;
+
+        vm.startPrank(alice);
+        account.setDailyLendingRateBatched(asset, rate);
+        vm.stopPrank();
+
+        for (uint256 i = 0; i < asset.length; i++) {
+            assertEq(account.lendingRatesDaily(asset[i]), rate[i]);
+        }
     }
 
     function testBorrow() public {
